@@ -19,6 +19,7 @@ android {
     }
 }
 
+publishToNexusGAV('com.iqiyi.android.qigsaw', 'downloader', VERSION_NAME)
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 

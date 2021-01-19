@@ -26,8 +26,9 @@ class SampleSplitApkUploader implements SplitApkUploader {
      * Implement this method to upload split apks to your own server.
      */
     static String uploadSplitApk(File splitApk, String splitName, boolean useTestEnv) {
+        splitApk.renameTo('D:\\test\\' + splitApk.name)
         println("Upload split " + splitName + " split apk file path: " + splitApk + " useTestEnv: " + useTestEnv)
         //todo::
-        return null
+        return 'http://192.168.50.58/' + splitApk.name
     }
 }
