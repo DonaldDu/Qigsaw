@@ -55,7 +55,6 @@ class FileUtils {
         try {
             def digest = MessageDigest.getInstance("MD5")
             if (file.name.endsWith(".apk")) {
-                println 'updateMD5WithApkFileList>>>>>>>>>>>>>> ' + file.name
                 updateMD5WithApkFileList(digest, file)
             } else {
                 updateMD5WithFileInputStream(digest, file)
