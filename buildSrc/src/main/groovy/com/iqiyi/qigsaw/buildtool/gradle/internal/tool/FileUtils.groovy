@@ -25,9 +25,11 @@
 package com.iqiyi.qigsaw.buildtool.gradle.internal.tool
 
 import com.google.gson.Gson
+import org.apache.commons.codec.binary.Hex
 
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.zip.ZipFile
 
 class FileUtils {
 
@@ -50,31 +52,41 @@ class FileUtils {
     }
 
     static String getMD5(File file) {
-        MessageDigest digest
         try {
-            digest = MessageDigest.getInstance("MD5")
+            def digest = MessageDigest.getInstance("MD5")
+            if (file.name.endsWith(".apk")) {
+                println 'updateMD5WithApkFileList>>>>>>>>>>>>>> ' + file.name
+                updateMD5WithApkFileList(digest, file)
+            } else {
+                updateMD5WithFileInputStream(digest, file)
+            }
+            return Hex.encodeHexString(digest.digest())
         } catch (NoSuchAlgorithmException e) {
             return null
         }
-        InputStream is
-        try {
-            is = new FileInputStream(file)
-        } catch (FileNotFoundException e) {
-            return null
-        }
+    }
 
-        byte[] buffer = new byte[BUFFER]
+    private static void updateMD5WithFileInputStream(MessageDigest digest, File file) {
+        updateMD5(digest, new FileInputStream(file))
+    }
+
+    private static void updateMD5WithApkFileList(MessageDigest digest, File file) {
+        def apk = new ZipFile(file)
+        def entries = apk.entries()
+        while (entries.hasMoreElements()) {
+            def entry = entries.nextElement()
+            def is = apk.getInputStream(entry)
+            updateMD5(digest, is)
+        }
+    }
+
+    private static void updateMD5(MessageDigest digest, InputStream is) {
+        byte[] buffer = new byte[1024 * 1024 * 5]//5MB
         int read
         try {
             while ((read = is.read(buffer)) > 0) {
                 digest.update(buffer, 0, read)
             }
-            byte[] md5sum = digest.digest()
-            BigInteger bigInt = new BigInteger(1, md5sum)
-            String output = bigInt.toString(16)
-            // Fill to 32 chars
-            output = String.format("%32s", output).replace(' ', '0')
-            return output
         } catch (IOException e) {
             throw new RuntimeException("Unable to process file for MD5", e)
         } finally {
