@@ -1,3 +1,4 @@
+include ':qhelper'
 include ':app','downloader'
 include ':java', ':assets', ':native'
 include ':splitcore', ':playcorelibrary', ':splitcommon'
