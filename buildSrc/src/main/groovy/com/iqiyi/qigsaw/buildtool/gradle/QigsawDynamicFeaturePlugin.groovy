@@ -26,7 +26,6 @@ package com.iqiyi.qigsaw.buildtool.gradle
 
 import com.android.build.gradle.AppExtension
 import com.iqiyi.qigsaw.buildtool.gradle.transform.SplitLibraryLoaderTransform
-import com.iqiyi.qigsaw.buildtool.gradle.transform.SplitResourcesLoaderTransform
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 
@@ -40,9 +39,8 @@ class QigsawDynamicFeaturePlugin extends QigsawPlugin {
         boolean hasQigsawTask = isQigsawBuild(project)
         AppExtension android = project.extensions.getByType(AppExtension)
         if (hasQigsawTask) {
-            SplitResourcesLoaderTransform resourcesLoaderTransform = new SplitResourcesLoaderTransform(project)
             SplitLibraryLoaderTransform libraryLoaderTransform = new SplitLibraryLoaderTransform(project)
-            android.registerTransform(resourcesLoaderTransform)
+//            android.registerTransform(new SplitResourcesLoaderTransform(project))
             android.registerTransform(libraryLoaderTransform)
         }
     }

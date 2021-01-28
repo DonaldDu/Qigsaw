@@ -124,4 +124,12 @@ class QigsawSplitExtensionHelper {
         }
         return null
     }
+
+    static boolean isAppendGitVersion(Project project) {
+        try {
+            return project.extensions.qigsawSplit.appendGitVersion
+        } catch (Throwable ignored) {
+            return true
+        }
+    }
 }

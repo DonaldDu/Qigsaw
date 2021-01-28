@@ -31,14 +31,9 @@ import com.iqiyi.qigsaw.buildtool.gradle.compiling.DexReMergeHandler
 import com.iqiyi.qigsaw.buildtool.gradle.compiling.FixedMainDexList
 import com.iqiyi.qigsaw.buildtool.gradle.extension.QigsawSplitExtension
 import com.iqiyi.qigsaw.buildtool.gradle.extension.QigsawSplitExtensionHelper
-import com.iqiyi.qigsaw.buildtool.gradle.internal.tool.AGPCompat
-import com.iqiyi.qigsaw.buildtool.gradle.internal.tool.FileUtils
-import com.iqiyi.qigsaw.buildtool.gradle.internal.tool.ApkSigner
-import com.iqiyi.qigsaw.buildtool.gradle.internal.tool.SplitLogger
-import com.iqiyi.qigsaw.buildtool.gradle.internal.tool.TinkerHelper
+import com.iqiyi.qigsaw.buildtool.gradle.internal.tool.*
 import com.iqiyi.qigsaw.buildtool.gradle.task.*
 import com.iqiyi.qigsaw.buildtool.gradle.transform.SplitComponentTransform
-import com.iqiyi.qigsaw.buildtool.gradle.transform.SplitResourcesLoaderTransform
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -64,12 +59,8 @@ class QigsawAppBasePlugin extends QigsawPlugin {
         def android = project.extensions.android
         //create ComponentInfo.class to record Android Component of dynamic features.
         SplitComponentTransform componentTransform = new SplitComponentTransform(project)
-        SplitResourcesLoaderTransform resourcesLoaderTransform = new SplitResourcesLoaderTransform(project, true)
         android.registerTransform(componentTransform)
 
-        if (isQigsawBuild) {
-            android.registerTransform(resourcesLoaderTransform)
-        }
         project.afterEvaluate {
             if (!AGPCompat.isAapt2EnabledCompat(project)) {
                 throw new GradleException('Qigsaw Error: AAPT2 required')
@@ -93,7 +84,7 @@ class QigsawAppBasePlugin extends QigsawPlugin {
                 if (baseVariant.versionName == null || baseVariant.applicationId == null) {
                     throw new GradleException("versionName and applicationId must be set in ${project.name}/build.gradle ")
                 }
-                String qigsawId = createQigsawId(project, baseVariant.versionName)
+                String qigsawId = createQigsawId(project, baseVariant.versionName, QigsawSplitExtensionHelper.isAppendGitVersion(project))
                 String completeSplitInfoVersion = jointCompleteSplitInfoVersion(project, baseVariant.versionName)
                 Set<String> baseAbiFilters = getAbiFilters(project, baseVariant)
                 ApkSigner apkSigner = new ApkSigner(project, baseVariant)
@@ -455,16 +446,18 @@ class QigsawAppBasePlugin extends QigsawPlugin {
         return versionName + "_" + QigsawSplitExtensionHelper.getSplitInfoVersion(project)
     }
 
-    static String createQigsawId(Project project, String versionName) {
-        try {
-            String gitRev = 'git rev-parse --short HEAD'.execute(null, project.rootDir).text.trim()
-            if (gitRev == null) {
-                return "NO_GIT"
+    static String createQigsawId(Project project, String versionName, boolean appendGitVersion) {
+        if (appendGitVersion) {
+            try {
+                String gitRev = 'git rev-parse --short HEAD'.execute(null, project.rootDir).text.trim()
+                if (gitRev == null) {
+                    return "NO_GIT"
+                }
+                return "${versionName}_${gitRev}"
+            } catch (Exception e) {
+                return "${versionName}_NO_GIT"
             }
-            return "${versionName}_${gitRev}"
-        } catch (Exception e) {
-            return "${versionName}_NO_GIT"
-        }
+        } else return versionName
     }
 
     static Set<String> getAbiFilters(Project project, def variant) {

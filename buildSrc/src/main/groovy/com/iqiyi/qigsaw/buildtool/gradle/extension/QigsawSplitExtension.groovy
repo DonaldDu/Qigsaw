@@ -50,6 +50,10 @@ class QigsawSplitExtension {
      * Whether release split apk to server if it need dynamic delivery
      */
     boolean releaseSplitApk = false
+    /**
+     * append code git version to qigsawId
+     * */
+    boolean appendGitVersion = true
 
     /**
      * Whether build multiple APKs for ABIs
