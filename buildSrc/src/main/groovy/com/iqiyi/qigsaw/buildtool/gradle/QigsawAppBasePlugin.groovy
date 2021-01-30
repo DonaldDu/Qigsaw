@@ -59,7 +59,7 @@ class QigsawAppBasePlugin extends QigsawPlugin {
         def android = project.extensions.android
         //create ComponentInfo.class to record Android Component of dynamic features.
         SplitComponentTransform componentTransform = new SplitComponentTransform(project)
-        android.registerTransform(componentTransform)
+//        android.registerTransform(componentTransform)
 
         project.afterEvaluate {
             if (!AGPCompat.isAapt2EnabledCompat(project)) {

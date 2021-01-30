@@ -53,17 +53,21 @@ public class SplitBaseInfoProvider {
 
     private static final String DEFAULT_SPLIT_INFO_VERSION_VALUE = "unknown_1.0.0";
 
-    private static String sPackageName;
+    private static String qigsawConfigClassName;
 
     public static void setPackageName(String packageName) {
-        sPackageName = packageName;
+        if (qigsawConfigClassName == null) qigsawConfigClassName = packageName + CLASS_QigsawConfig;
     }
 
-    private static Class getQigsawConfigClass() throws ClassNotFoundException {
+    public static void setQigsawConfigClassName(String className) {
+        if (qigsawConfigClassName == null) qigsawConfigClassName = className;
+    }
+
+    private static Class<?> getQigsawConfigClass() throws ClassNotFoundException {
         try {
-            return Class.forName(sPackageName + CLASS_QigsawConfig);
+            return Class.forName(qigsawConfigClassName);
         } catch (ClassNotFoundException e) {
-            SplitLog.w(TAG, "Qigsaw Warning: Can't find class " + sPackageName + ".QigsawConfig.class!");
+            SplitLog.w(TAG, "Qigsaw Warning: Can't find class " + qigsawConfigClassName + ".QigsawConfig.class!");
             throw e;
         }
     }

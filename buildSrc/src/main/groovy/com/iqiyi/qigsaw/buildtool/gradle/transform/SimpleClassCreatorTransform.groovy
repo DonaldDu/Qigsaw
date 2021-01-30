@@ -89,10 +89,9 @@ abstract class SimpleClassCreatorTransform extends Transform {
         if (listener != null) {
             listener.onVisit(cw)
         }
-        classFile
-                .withOutputStream { os ->
-                    os.write(cw.toByteArray())
-                }
+        classFile.withOutputStream { os ->
+            os.write(cw.toByteArray())
+        }
         cw.visitEnd()
     }
 

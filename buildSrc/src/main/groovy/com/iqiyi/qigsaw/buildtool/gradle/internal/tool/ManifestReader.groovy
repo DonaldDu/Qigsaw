@@ -71,6 +71,7 @@ class ManifestReader {
         manifest.application.provider.each {
             String name = it.'@android:name'.toString()
             providers.add(name)
+            println 'readProviderNames>>>>>>>' + name
         }
         return providers.build()
     }

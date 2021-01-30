@@ -26,11 +26,10 @@ package com.iqiyi.android.qigsaw.core.splitrequest.splitinfo;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import android.text.TextUtils;
 
 import com.iqiyi.android.qigsaw.core.common.FileUtil;
 import com.iqiyi.android.qigsaw.core.common.SplitConstants;
@@ -186,6 +185,20 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
         return null;
     }
 
+    private SplitDetails createSplitDetailsForDefaultVersionWithFile(Context context, String defaultVersion) {
+        try {
+            File info = SplitInfoManagerService.getDefaultSplitInfoFile(context, defaultVersion);
+            SplitLog.i(TAG, "retry Default split file : " + info.getAbsolutePath());
+            long currentTime = System.currentTimeMillis();
+            SplitDetails details = parseSplitContentsForNewVersion(info);
+            SplitLog.i(TAG, "Cost %d mil-second to parse default split info", (System.currentTimeMillis() - currentTime));
+            return details;
+        } catch (Throwable e) {
+            SplitLog.printErrStackTrace(TAG, e, "Failed to create default split info from file!");
+        }
+        return null;
+    }
+
     private SplitDetails createSplitDetailsForNewVersion(File newSplitInfoFile) {
         try {
             SplitLog.i(TAG, "Updated split file path: " + newSplitInfoFile.getAbsolutePath());
@@ -208,6 +221,7 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
             SplitLog.i(TAG, "currentVersion : %s defaultVersion : %s", currentVersion, defaultVersion);
             if (defaultVersion.equals(currentVersion)) {
                 details = createSplitDetailsForDefaultVersion(context, defaultVersion);
+                if (details == null) details = createSplitDetailsForDefaultVersionWithFile(context, defaultVersion);
             } else {
                 File updatedSplitInfoFile = new File(versionManager.getRootDir(), SplitConstants.QIGSAW_PREFIX + currentVersion + SplitConstants.DOT_JSON);
                 details = createSplitDetailsForNewVersion(updatedSplitInfoFile);
