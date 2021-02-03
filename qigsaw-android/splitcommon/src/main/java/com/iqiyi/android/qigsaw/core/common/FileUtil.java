@@ -6,8 +6,6 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
-import org.apache.commons.codec.binary.Hex;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -18,8 +16,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -152,10 +150,19 @@ public class FileUtil {
             } else {
                 updateMD5WithFileInputStream(digest, file);
             }
-            return Hex.encodeHexString(digest.digest());
+            return encodeHexString(digest.digest());
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static String encodeHexString(byte[] data) {
+        String md5 = new BigInteger(1, data).toString(16);
+        StringBuilder sb = new StringBuilder(md5);
+        while (sb.length() < data.length * 2) {
+            sb.insert(0, '0');
+        }
+        return sb.toString();
     }
 
     /**
