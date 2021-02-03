@@ -24,10 +24,10 @@
 
 package com.iqiyi.android.qigsaw.core.splitrequest.splitinfo;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
-
-import android.content.Context;
 
 import com.iqiyi.android.qigsaw.core.common.AbiUtil;
 import com.iqiyi.android.qigsaw.core.common.SplitConstants;
@@ -110,7 +110,7 @@ public class SplitInfo {
             }
         }
         if (primaryAbi != null && primaryApkDataList.size() <= 1) {
-            throw new RuntimeException("Unable to find split config apk for abi" + primaryAbi.abi);
+            throw new RuntimeException("Unable to find split config apk for abi:" + primaryAbi.abi);
         }
         return primaryApkDataList;
     }
