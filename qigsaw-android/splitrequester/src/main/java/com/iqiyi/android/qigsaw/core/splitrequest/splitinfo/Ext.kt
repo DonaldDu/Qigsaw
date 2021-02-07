@@ -29,7 +29,7 @@ private fun SplitDetails.getSplitCaches(context: Context, old: SplitDetails): Li
     old.splitInfoListing.splitInfoMap.values.forEach { oldSplit ->
         try {
             val newSplit = splitInfoListing.splitInfoMap[oldSplit.splitName]
-            if (newSplit != null && newSplit.appVersion != oldSplit.appVersion) {
+            if (newSplit != null && newSplit.splitVersion != oldSplit.splitVersion) {
                 val newApks = newSplit.getApkDataList(context)
                 val oldApks = oldSplit.getApkDataList(context)
                 newApks.forEach { new ->
