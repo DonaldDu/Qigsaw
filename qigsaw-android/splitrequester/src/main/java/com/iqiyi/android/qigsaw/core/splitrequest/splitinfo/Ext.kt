@@ -49,12 +49,10 @@ private fun copyInstalledToCache(context: Context, caches: List<SplitCache>) {
     val splitCacheDir = context.splitCacheDir()
     caches.forEach {
         val root = SplitPathManager.require().getSplitRootDir(it.info)
-        if (root.exists()) {
-            val apk = it.findApk(root)
-            if (apk != null) {
-                val cache = File(splitCacheDir, "${it.md5}.apk")
-                if (!cache.exists()) FileUtils.copyFile(apk, cache)
-            }
+        val apk = it.findApk(root)
+        if (apk != null) {
+            val cache = File(splitCacheDir, "${it.md5}.apk")
+            if (!cache.exists()) FileUtils.copyFile(apk, cache)
         }
     }
 }
