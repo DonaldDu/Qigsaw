@@ -11,6 +11,7 @@ import java.io.File
  * 这样可以解决新版本仅变动了一个模块，但其它模块也要升级而重新下载的问题。
  * */
 object QgsawSplitCache {
+    const val LOCAL_HOST = "http://127.0.0.1/"
     private lateinit var context: Application
     fun init(application: Application) {
         context = application
@@ -27,7 +28,7 @@ object QgsawSplitCache {
             val cacheName = cacheReg.find(url)?.groupValues?.get(1)
             if (cacheName != null) {
                 val cache = File(getCacheDir(), cacheName)
-                return Uri.fromFile(cache).toString()
+                return LOCAL_HOST + cache.absolutePath
             }
         }
         return url
