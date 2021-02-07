@@ -279,7 +279,7 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
         return stringBuffer.toString();
     }
 
-    private static SplitDetails parseSplitsContent(String content) throws JSONException {
+    public static SplitDetails parseSplitsContent(String content) throws JSONException {
         if (content == null) {
             return null;
         }

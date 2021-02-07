@@ -38,8 +38,6 @@ import com.iqiyi.android.qigsaw.core.common.SplitLog;
 import com.iqiyi.android.qigsaw.core.splitreport.SplitUpdateErrorCode;
 import com.iqiyi.android.qigsaw.core.splitreport.SplitUpdateReporter;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +48,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 @RestrictTo(LIBRARY_GROUP)
 public class SplitUpdateService extends IntentService {
 
-    private static final String TAG = "SplitUpdateService";
+    static final String TAG = "SplitUpdateService";
 
     public SplitUpdateService() {
         super("qigsaw_split_update");
@@ -144,7 +142,8 @@ public class SplitUpdateService extends IntentService {
         String version = manager.getCurrentSplitInfoVersion();
         File defaultSplitInfo = SplitInfoManagerService.getDefaultSplitInfoFile(this, version);
         try {
-            FileUtils.copyFile(new File(newSplitInfoPath), defaultSplitInfo);
+            File newSplitInfo = new File(newSplitInfoPath);
+            ExtKt.updateDefaultSplitInfo(this, defaultSplitInfo, newSplitInfo);
             SplitLog.w(TAG, "Success to updateDefaultSplitInfo: " + defaultSplitInfo.getAbsolutePath());
         } catch (Exception e) {
             SplitLog.w(TAG, "failed to updateDefaultSplitInfo: %s", e);
