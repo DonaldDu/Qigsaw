@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.iqiyi.android.qigsaw.core.common.QgsawSplitCache;
 import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.OkDownload;
@@ -159,6 +161,7 @@ public class GroupDownloadContext {
 
         List<DownloadTask> tasksList = new ArrayList<>();
         for (String url : urls) {
+            url = QgsawSplitCache.cacheUrl(url);
             DownloadTask task = new DownloadTask.Builder(url, parentPath[i], fileName[i]).setPriority(priority).build(); //if filename[i] is null,the name of downloaded file will be decided by url
             Log.d(TAG, "startQueueDownload: tempPriority:" + priority + " i:" + i);
             tasksList.add(task);
@@ -185,6 +188,7 @@ public class GroupDownloadContext {
         List<DownloadTask> tasksList = new ArrayList<>();
         int i = 0;
         for (String url : urls) {
+            url = QgsawSplitCache.cacheUrl(url);
             DownloadTask task = new DownloadTask.Builder(url, parentPath[i], fileName[i]).setPriority(priority).build(); //if filename[i] is null,the name of downloaded file will be decided by url
             Log.d(TAG, "startQueueDownload: tempPriority:" + priority + " i:" + i);
             tasksList.add(task);
@@ -341,7 +345,7 @@ public class GroupDownloadContext {
                 throw new IllegalArgumentException("If you want to bind only with url, you have to"
                         + " provide parentPath on QueueSet!");
             }
-
+            url = QgsawSplitCache.cacheUrl(url);
             return bind(new DownloadTask.Builder(url, set.uri).setFilenameFromResponse(true));
         }
 

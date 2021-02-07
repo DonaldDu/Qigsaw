@@ -1,6 +1,8 @@
 package com.iqiyi.android.qigsaw.core.common
 
+import android.app.Application
 import android.content.Context
+import android.net.Uri
 import java.io.File
 
 /**
@@ -9,8 +11,26 @@ import java.io.File
  * 这样可以解决新版本仅变动了一个模块，但其它模块也要升级而重新下载的问题。
  * */
 object QgsawSplitCache {
-    fun getCacheDir(context: Context): File {
-        return File(context.cacheDir, "QgsawSplitCache")
+    private lateinit var context: Application
+    fun init(application: Application) {
+        context = application
+    }
+
+    private fun getCacheDir(): File {
+        return context.splitCacheDir()
+    }
+
+    @JvmStatic
+    fun cacheUrl(url: String): String {
+        if (url.startsWith("http")) {
+            val cacheReg = "-([a-z0-9]{32}\\.apk$)".toRegex()//'md5.apk'
+            val cacheName = cacheReg.find(url)?.groupValues?.get(1)
+            if (cacheName != null) {
+                val cache = File(getCacheDir(), cacheName)
+                return Uri.fromFile(cache).toString()
+            }
+        }
+        return url
     }
 }
 

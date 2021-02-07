@@ -378,7 +378,7 @@ final class SplitInstallSupervisorImpl extends SplitInstallSupervisor {
                 downloadCallback.onCompleted();
             } else {
                 if (isMobileAvailable(appContext)) {
-                    if (realTotalBytesNeedToDownload > downloadSizeThresholdValue) {
+                    if (realTotalBytesNeedToDownload > downloadSizeThresholdValue) {//fixme what if cache
                         startUserConfirmationActivity(sessionState, realTotalBytesNeedToDownload, downloadRequests);
                         return;
                     }
