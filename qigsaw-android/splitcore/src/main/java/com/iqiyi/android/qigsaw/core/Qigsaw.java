@@ -122,10 +122,6 @@ public class Qigsaw {
         SplitBaseInfoProvider.setQigsawConfigClassName(qigsawConfigClassName);
     }
 
-    public static void updateSplitDetailsForDefaultVersion(File file) {
-
-    }
-
     private void onBaseContextAttached() {
         SplitBaseInfoProvider.setPackageName(context.getPackageName());
         boolean qigsawMode = SplitBaseInfoProvider.isQigsawMode();

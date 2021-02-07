@@ -6,6 +6,8 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
+import com.dhy.md5.MD5UtilKt;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -139,30 +141,19 @@ public class FileUtil {
      * @param file
      */
     public static String getMD5(final File file) {
-        if (file == null || !file.exists()) {
-            return null;
-        }
+        if (file == null || !file.exists()) return null;
 
         try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
             if (file.getName().endsWith(".apk")) {
-                updateMD5WithApkFileList(digest, file);
+                return MD5UtilKt.apkMd5(file);
             } else {
+                MessageDigest digest = MessageDigest.getInstance("MD5");
                 updateMD5WithFileInputStream(digest, file);
+                return MD5UtilKt.toHex(digest.digest());
             }
-            return encodeHexString(digest.digest());
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private static String encodeHexString(byte[] data) {
-        String md5 = new BigInteger(1, data).toString(16);
-        StringBuilder sb = new StringBuilder(md5);
-        while (sb.length() < data.length * 2) {
-            sb.insert(0, '0');
-        }
-        return sb.toString();
     }
 
     /**
@@ -199,16 +190,6 @@ public class FileUtil {
 
     private static void updateMD5WithFileInputStream(MessageDigest digest, File file) throws FileNotFoundException {
         updateMD5(digest, new FileInputStream(file));
-    }
-
-    private static void updateMD5WithApkFileList(MessageDigest digest, File file) throws IOException {
-        ZipFile apk = new ZipFile(file);
-        Enumeration<? extends ZipEntry> entries = apk.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            InputStream is = apk.getInputStream(entry);
-            updateMD5(digest, is);
-        }
     }
 
     private static void updateMD5(MessageDigest digest, InputStream is) {
