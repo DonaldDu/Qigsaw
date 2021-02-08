@@ -55,11 +55,13 @@ private fun SplitDetails.getUnchangedSplits(context: Context, old: SplitDetails)
     val unchangedSplits: MutableList<String> = mutableListOf()
     splitInfoListing.splitInfoMap.keys.forEach { splitName ->
         val newSplitInfo = splitInfoListing.splitInfoMap[splitName]!!
-        val oldSplitInfo = old.splitInfoListing.splitInfoMap[splitName]!!
-        if (newSplitInfo.splitVersion == oldSplitInfo.splitVersion) {
-            val newApks = newSplitInfo.getApkDataList(context).map { it.abi + it.md5 }
-            val oldApks = oldSplitInfo.getApkDataList(context).map { it.abi + it.md5 }
-            if (oldApks.containsAll(newApks)) unchangedSplits.add(splitName)
+        if (!newSplitInfo.splitVersion.contains("@")) {//不带‘@’的版本号为自动生成的，可能有未变动的组件。其它的都是有变动才更新。
+            val oldSplitInfo = old.splitInfoListing.splitInfoMap[splitName]!!
+            if (newSplitInfo.splitVersion != oldSplitInfo.splitVersion) {
+                val newApks = newSplitInfo.getApkDataList(context).map { it.abi + it.md5 }
+                val oldApks = oldSplitInfo.getApkDataList(context).map { it.abi + it.md5 }
+                if (oldApks.containsAll(newApks)) unchangedSplits.add(splitName)
+            }
         }
     }
     return unchangedSplits
@@ -102,8 +104,8 @@ private fun SplitDetails.getSplitCaches(context: Context, old: SplitDetails): Li
 private fun copyInstalledToCache(context: Context, caches: List<SplitCache>) {
     val splitCacheDir = context.splitCacheDir()
     caches.forEach {
-        val root = SplitPathManager.require().getSplitRootDir(it.info)
-        val apk = it.findApk(root)
+        val splitDir = SplitPathManager.require().getSplitDir(it.info)
+        val apk = it.findApk(splitDir)
         if (apk != null) {
             val cache = File(splitCacheDir, "${it.md5}.apk")
             if (!cache.exists()) FileUtils.copyFile(apk, cache)
