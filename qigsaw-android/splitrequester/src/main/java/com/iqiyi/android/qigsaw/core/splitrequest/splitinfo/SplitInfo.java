@@ -206,7 +206,6 @@ public class SplitInfo {
     }
 
     public static class ApkData {
-
         private String abi;
 
         private String url;
@@ -236,6 +235,16 @@ public class SplitInfo {
 
         public long getSize() {
             return size;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return (o instanceof ApkData && o.hashCode() == hashCode());
+        }
+
+        @Override
+        public int hashCode() {
+            return md5.hashCode();
         }
     }
 

@@ -35,6 +35,9 @@ object QgsawSplitCache {
     }
 }
 
+/**
+ * splitCacheDir 中存放的文件都是完整的，能直接用的，不能保存不完整或下载中的。
+ * */
 fun Context.splitCacheDir(): File {
     return File(cacheDir, "QgsawSplitCache")
 }
