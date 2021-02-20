@@ -1,7 +1,6 @@
 package com.iqiyi.android.qigsaw.core.splitrequest.splitinfo
 
 import android.content.Context
-import com.iqiyi.android.qigsaw.core.common.SplitLog
 import com.iqiyi.android.qigsaw.core.common.splitCacheDir
 import net.dongliu.apk.parser.ApkFile
 import org.apache.commons.io.FileUtils
@@ -82,17 +81,13 @@ private fun String.toSplitDetails(): SplitDetails {
 private fun SplitDetails.getSplitCaches(context: Context, old: SplitDetails): List<SplitCache> {
     val caches: MutableList<SplitCache> = mutableListOf()
     splitInfoListing.splitInfoMap.keys.forEach { splitName ->
-        try {
-            val newSplit = splitInfoListing.splitInfoMap[splitName]!!
-            val oldSplit = old.splitInfoListing.splitInfoMap[splitName]!!
-            if (newSplit.splitVersion != oldSplit.splitVersion) {
-                val newApks = newSplit.getApkDataList(context)
-                val oldApks = oldSplit.getApkDataList(context)
-                val unchanges = oldApks.intersect(newApks).map { SplitCache(oldSplit, it) }
-                caches.addAll(unchanges)
-            }
-        } catch (e: Exception) {
-            SplitLog.w(SplitUpdateService.TAG, "failed to update Split cache: %s", e)
+        val newSplit = splitInfoListing.splitInfoMap[splitName]!!
+        val oldSplit = old.splitInfoListing.splitInfoMap[splitName]!!
+        if (newSplit.splitVersion != oldSplit.splitVersion) {
+            val newApks = newSplit.getApkDataList(context)
+            val oldApks = oldSplit.getApkDataList(context)
+            val unchanged = oldApks.intersect(newApks).map { SplitCache(oldSplit, it) }
+            caches.addAll(unchanged)
         }
     }
     return caches
