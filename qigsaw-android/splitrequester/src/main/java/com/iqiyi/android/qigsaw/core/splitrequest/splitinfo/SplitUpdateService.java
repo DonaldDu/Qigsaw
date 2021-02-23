@@ -143,7 +143,7 @@ public class SplitUpdateService extends IntentService {
         File defaultSplitInfo = SplitInfoManagerService.getDefaultSplitInfoFile(this, version);
         try {
             File newSplitInfo = new File(newSplitInfoPath);
-            ExtKt.updateDefaultSplitInfo(this, defaultSplitInfo, newSplitInfo);
+            SplitCacheUtilKt.updateDefaultSplitInfo(this, defaultSplitInfo, newSplitInfo);
             SplitLog.w(TAG, "Success to updateDefaultSplitInfo: " + defaultSplitInfo.getAbsolutePath());
         } catch (Exception e) {
             SplitLog.w(TAG, "failed to updateDefaultSplitInfo: %s", e);
