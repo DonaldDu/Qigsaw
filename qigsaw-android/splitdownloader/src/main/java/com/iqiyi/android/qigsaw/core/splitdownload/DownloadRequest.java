@@ -47,6 +47,15 @@ public final class DownloadRequest implements Parcelable {
         fileMD5 = in.readString();
     }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(url);
+        dest.writeString(fileDir);
+        dest.writeString(fileName);
+        dest.writeString(moduleName);
+        dest.writeString(fileMD5);
+    }
+
     public static final Creator<DownloadRequest> CREATOR = new Creator<DownloadRequest>() {
         @Override
         public DownloadRequest createFromParcel(Parcel in) {
@@ -94,14 +103,6 @@ public final class DownloadRequest implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(url);
-        dest.writeString(fileDir);
-        dest.writeString(fileName);
-        dest.writeString(moduleName);
     }
 
     public static class Builder {
