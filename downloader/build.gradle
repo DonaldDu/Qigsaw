@@ -29,6 +29,7 @@ publishToNexusGAV('com.iqiyi.android.qigsaw', 'downloader', VERSION_NAME)
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':splitcommon')
+    implementation project(path: ':splitdownloader')
     //for downloader
     compileOnly 'net.jcip:jcip-annotations:1.0'
     compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.3'
