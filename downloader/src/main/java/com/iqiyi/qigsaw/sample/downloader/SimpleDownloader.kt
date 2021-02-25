@@ -1,5 +1,6 @@
 package com.iqiyi.qigsaw.sample.downloader
 
+import android.util.Log
 import com.iqiyi.android.qigsaw.core.splitdownload.DownloadCallback
 import com.iqiyi.android.qigsaw.core.splitdownload.DownloadRequest
 import com.iqiyi.android.qigsaw.core.splitdownload.Downloader
@@ -49,37 +50,44 @@ class SimpleDownloader(private val threshold: Long = 10 * 1024 * 1024, private v
     }
 
     private inner class TaskDownloadCallBack(private val sessionId: Int, private val callback: DownloadCallback) : DownloadListener3() {
+        val TAG="DownloadCallback"
         override fun retry(task: DownloadTask, cause: ResumeFailedCause) {
-
+            Log.d(TAG, "retry: ---------------")
         }
 
         override fun connected(task: DownloadTask, blockCount: Int, currentOffset: Long, totalLength: Long) {
-
+            Log.d(TAG, "connected: ---------------")
         }
 
         override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
             callback.onProgress(currentOffset)
+            Log.d(TAG, "progress: ---------------")
         }
 
         override fun started(task: DownloadTask) {
             callback.onStart()
+            Log.d(TAG, "started: ---------------")
         }
 
         override fun completed(task: DownloadTask) {
             downloadTasks.remove(sessionId)
             callback.onCompleted()
+            Log.d(TAG, "onCompleted: ---------------")
         }
 
         override fun canceled(task: DownloadTask) {
             downloadTasks.remove(sessionId)
             callback.onCanceled()
+            Log.d(TAG, "canceled: ---------------")
         }
 
         override fun error(task: DownloadTask, e: Exception) {
             callback.onError(e.hashCode())
+            Log.d(TAG, "error: ---------------")
         }
 
         override fun warn(task: DownloadTask) {
+            Log.d(TAG, "warn: ---------------")
         }
     }
 }
