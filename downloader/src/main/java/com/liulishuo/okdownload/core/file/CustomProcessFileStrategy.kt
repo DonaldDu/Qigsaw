@@ -12,6 +12,9 @@ class CustomProcessFileStrategy : ProcessFileStrategy() {
     }
 }
 
+/**
+ * https://github.com/lingochamp/okdownload/issues/415
+ * */
 fun Context.fixOkDownloadError() {
     val download = OkDownload.Builder(this)
             .processFileStrategy(CustomProcessFileStrategy())
