@@ -30,7 +30,11 @@ class SimpleDownloader(private val threshold: Long = 10 * 1024 * 1024, private v
 
     override fun cancelDownloadSync(sessionId: Int): Boolean {
         val tasks = downloadTasks.remove(sessionId)
-        tasks?.forEach { it.cancel() }
+        if (tasks != null) {
+            if (tasks.size == 1) tasks.first().cancel()
+            else DownloadTask.cancel(tasks)
+
+        }
         return tasks != null
     }
 
@@ -45,6 +49,7 @@ class SimpleDownloader(private val threshold: Long = 10 * 1024 * 1024, private v
     private fun DownloadRequest.toTask(deferred: Boolean, wifiRequired: Boolean): DownloadTask {
         val priority = if (deferred) 0 else 10
         val task = DownloadTask.Builder(url, fileDir, fileName)
+                .setConnectionCount(1)//fixError https://github.com/lingochamp/okdownload/issues/415
                 .setPriority(priority)
                 .setMinIntervalMillisCallbackProcess(progressInterval)
                 .setWifiRequired(wifiRequired)
@@ -53,7 +58,7 @@ class SimpleDownloader(private val threshold: Long = 10 * 1024 * 1024, private v
         return task
     }
 
-    private data class DownloadProgress(var currentOffset: Long = 0, var completed: Boolean = false)
+    private data class DownloadProgress(var currentOffset: Long = 0, var completed: Boolean = false, var retryCount: Int = 3)
 
     private val DownloadTask.progress: DownloadProgress
         get() {
@@ -111,8 +116,11 @@ class SimpleDownloader(private val threshold: Long = 10 * 1024 * 1024, private v
 
         override fun error(task: DownloadTask, e: Exception) {
             e.printStackTrace()
-            callback.onError(e.hashCode())
             if (log) Log.d(TAG, "error: ---------------")
+            if (task.progress.retryCount > 0) {
+                task.progress.retryCount--
+                task.enqueue(this)
+            } else callback.onError(e.hashCode())
         }
 
         override fun warn(task: DownloadTask) {
