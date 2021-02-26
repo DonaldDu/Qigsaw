@@ -24,8 +24,6 @@
 
 package com.iqiyi.android.qigsaw.core.extension;
 
-import java.lang.reflect.Field;
-
 final class ComponentInfoManager {
 
     /**
@@ -46,75 +44,75 @@ final class ComponentInfoManager {
     }
 
     static String getSplitApplication(String splitName) {
-        String fieldName = splitName + APPLICATION_SUFFIX;
-        try {
-            Field field = getComponentInfoClass().getField(fieldName);
-            field.setAccessible(true);
-            return (String) field.get(null);
-        } catch (NoSuchFieldException e) {
-            //
-        } catch (IllegalAccessException e) {
-            //
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        String fieldName = splitName + APPLICATION_SUFFIX;
+//        try {
+//            Field field = getComponentInfoClass().getField(fieldName);
+//            field.setAccessible(true);
+//            return (String) field.get(null);
+//        } catch (NoSuchFieldException e) {
+//            //
+//        } catch (IllegalAccessException e) {
+//            //
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 
     static String[] getSplitActivities(String splitName) {
-        String fieldName = splitName + ACTIVITIES_SUFFIX;
-        try {
-            Field field = getComponentInfoClass().getField(fieldName);
-            field.setAccessible(true);
-            String result = (String) field.get(null);
-            if (result != null) {
-                return result.split(",");
-            }
-        } catch (NoSuchFieldException e) {
-            //
-        } catch (IllegalAccessException e) {
-            //
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        String fieldName = splitName + ACTIVITIES_SUFFIX;
+//        try {
+//            Field field = getComponentInfoClass().getField(fieldName);
+//            field.setAccessible(true);
+//            String result = (String) field.get(null);
+//            if (result != null) {
+//                return result.split(",");
+//            }
+//        } catch (NoSuchFieldException e) {
+//            //
+//        } catch (IllegalAccessException e) {
+//            //
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 
     static String[] getSplitServices(String splitName) {
-        String fieldName = splitName + SERVICES_SUFFIX;
-        try {
-            Field field = getComponentInfoClass().getField(fieldName);
-            field.setAccessible(true);
-            String result = (String) field.get(null);
-            if (result != null) {
-                return result.split(",");
-            }
-        } catch (NoSuchFieldException e) {
-            //
-        } catch (IllegalAccessException e) {
-            //
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        String fieldName = splitName + SERVICES_SUFFIX;
+//        try {
+//            Field field = getComponentInfoClass().getField(fieldName);
+//            field.setAccessible(true);
+//            String result = (String) field.get(null);
+//            if (result != null) {
+//                return result.split(",");
+//            }
+//        } catch (NoSuchFieldException e) {
+//            //
+//        } catch (IllegalAccessException e) {
+//            //
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 
     static String[] getSplitReceivers(String splitName) {
-        String fieldName = splitName + RECEIVERS_SUFFIX;
-        try {
-            Field field = getComponentInfoClass().getField(fieldName);
-            field.setAccessible(true);
-            String result = (String) field.get(null);
-            if (result != null) {
-                return result.split(",");
-            }
-        } catch (NoSuchFieldException e) {
-            //
-        } catch (IllegalAccessException e) {
-            //
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        String fieldName = splitName + RECEIVERS_SUFFIX;
+//        try {
+//            Field field = getComponentInfoClass().getField(fieldName);
+//            field.setAccessible(true);
+//            String result = (String) field.get(null);
+//            if (result != null) {
+//                return result.split(",");
+//            }
+//        } catch (NoSuchFieldException e) {
+//            //
+//        } catch (IllegalAccessException e) {
+//            //
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
         return null;
     }
 
