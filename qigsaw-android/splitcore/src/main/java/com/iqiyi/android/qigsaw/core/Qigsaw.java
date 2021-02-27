@@ -244,22 +244,6 @@ public class Qigsaw {
     }
 
     /**
-     * @param defaultSplitInfoPath path of default split info file.
-     * @return if {@code true} start service successfully, otherwise {@code false}.
-     */
-    public static boolean updateDefaultSplitInfo(Context context, @NonNull String defaultSplitInfoPath) {
-        try {
-            Intent intent = new Intent();
-            intent.setClassName(context, "com.iqiyi.android.qigsaw.core.splitrequest.splitinfo.SplitUpdateService");
-            intent.putExtra(SplitConstants.NEW_SPLIT_INFO_PATH, defaultSplitInfoPath);
-            context.startService(intent);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Clean stale disk cache of all splits.
      */
     private static void cleanStaleSplits(Context context) {

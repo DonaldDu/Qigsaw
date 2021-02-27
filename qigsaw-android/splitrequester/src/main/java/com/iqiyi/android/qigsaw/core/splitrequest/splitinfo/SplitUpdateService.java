@@ -71,12 +71,13 @@ public class SplitUpdateService extends IntentService {
             SplitLog.w(TAG, "SplitInfoManager has not been created!");
             return;
         }
+        String oldSplitInfoVersion = manager.getCurrentSplitInfoVersion();
         //parse split-info version.
         String newSplitInfoVersion = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_VERSION);
         //parse split-info file path.
         String newSplitInfoPath = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_PATH);
-        if (newSplitInfoVersion == null) {//no new version means default
-            updateDefaultSplitInfo(newSplitInfoPath);
+        if (newSplitInfoVersion.equals(oldSplitInfoVersion)) {//no new version means default
+            updateDefaultSplitInfo(manager, oldSplitInfoVersion, newSplitInfoPath);
             return;
         }
 
@@ -85,7 +86,6 @@ public class SplitUpdateService extends IntentService {
             SplitLog.w(TAG, "Failed to get splits info of current split-info version!");
             return;
         }
-        String oldSplitInfoVersion = manager.getCurrentSplitInfoVersion();
         //parse registered class name of receiver.
         if (TextUtils.isEmpty(newSplitInfoVersion)) {
             SplitLog.w(TAG, "New split-info version null");
@@ -105,7 +105,7 @@ public class SplitUpdateService extends IntentService {
             return;
         }
 
-        if (newSplitInfoVersion.equals(manager.getCurrentSplitInfoVersion())) {
+        if (newSplitInfoVersion.equals(oldSplitInfoVersion)) {
             SplitLog.w(TAG, "New split-info version %s is equals to current version!", newSplitInfoVersion);
             onUpdateError(oldSplitInfoVersion, newSplitInfoVersion, SplitUpdateErrorCode.ERROR_SPLIT_INFO_VERSION_EXISTED);
             return;
@@ -136,18 +136,8 @@ public class SplitUpdateService extends IntentService {
         }
     }
 
-    private void updateDefaultSplitInfo(String newSplitInfoPath) {
-        SplitInfoManager manager = SplitInfoManagerService.getInstance();
-        if (manager == null) return;
-        String version = manager.getCurrentSplitInfoVersion();
-        File defaultSplitInfo = SplitInfoManagerService.getDefaultSplitInfoFile(this, version);
-        try {
-            File newSplitInfo = new File(newSplitInfoPath);
-            SplitCacheUtilKt.updateDefaultSplitInfo(this, defaultSplitInfo, newSplitInfo);
-            SplitLog.w(TAG, "Success to updateDefaultSplitInfo: " + defaultSplitInfo.getAbsolutePath());
-        } catch (Exception e) {
-            SplitLog.w(TAG, "failed to updateDefaultSplitInfo: %s", e);
-        }
+    private void updateDefaultSplitInfo(SplitInfoManager manager, String oldSplitInfoVersion, String newSplitInfoPath) {
+        manager.updateSplitInfoVersion(getApplicationContext(), oldSplitInfoVersion, new File(newSplitInfoPath));
     }
 
     private void onUpdateOK(String oldSplitInfoVersion, String newSplitInfoVersion, List<String> updateSplits) {

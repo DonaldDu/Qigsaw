@@ -185,20 +185,6 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
         return null;
     }
 
-    private SplitDetails createSplitDetailsForDefaultVersionWithFile(Context context, String defaultVersion) {
-        try {
-            File info = SplitInfoManagerService.getDefaultSplitInfoFile(context, defaultVersion);
-            SplitLog.i(TAG, "retry Default split file : " + info.getAbsolutePath());
-            long currentTime = System.currentTimeMillis();
-            SplitDetails details = parseSplitContentsForNewVersion(info);
-            SplitLog.i(TAG, "Cost %d mil-second to parse default split info", (System.currentTimeMillis() - currentTime));
-            return details;
-        } catch (Throwable e) {
-            SplitLog.printErrStackTrace(TAG, e, "Failed to create default split info from file!");
-        }
-        return null;
-    }
-
     private SplitDetails createSplitDetailsForNewVersion(File newSplitInfoFile) {
         try {
             SplitLog.i(TAG, "Updated split file path: " + newSplitInfoFile.getAbsolutePath());
@@ -219,13 +205,10 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
             String currentVersion = versionManager.getCurrentVersion();
             String defaultVersion = versionManager.getDefaultVersion();
             SplitLog.i(TAG, "currentVersion : %s defaultVersion : %s", currentVersion, defaultVersion);
-            if (defaultVersion.equals(currentVersion)) {
-                details = createSplitDetailsForDefaultVersion(context, defaultVersion);
-                if (details == null) details = createSplitDetailsForDefaultVersionWithFile(context, defaultVersion);
-            } else {
-                File updatedSplitInfoFile = new File(versionManager.getRootDir(), SplitConstants.QIGSAW_PREFIX + currentVersion + SplitConstants.DOT_JSON);
-                details = createSplitDetailsForNewVersion(updatedSplitInfoFile);
-            }
+
+            File updatedSplitInfoFile = new File(versionManager.getRootDir(), SplitConstants.QIGSAW_PREFIX + currentVersion + SplitConstants.DOT_JSON);
+            details = createSplitDetailsForNewVersion(updatedSplitInfoFile);
+
             if (details != null) {
                 if (TextUtils.isEmpty(details.getQigsawId())) {
                     return null;
@@ -279,7 +262,7 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
         return stringBuffer.toString();
     }
 
-    public static SplitDetails parseSplitsContent(String content) throws JSONException {
+    private static SplitDetails parseSplitsContent(String content) throws JSONException {
         if (content == null) {
             return null;
         }

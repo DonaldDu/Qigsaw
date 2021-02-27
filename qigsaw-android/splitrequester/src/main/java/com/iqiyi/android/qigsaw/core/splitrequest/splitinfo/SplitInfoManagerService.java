@@ -25,13 +25,9 @@
 package com.iqiyi.android.qigsaw.core.splitrequest.splitinfo;
 
 import android.content.Context;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 
-import com.iqiyi.android.qigsaw.core.common.SplitConstants;
-
-import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
@@ -55,10 +51,5 @@ public class SplitInfoManagerService {
         SplitInfoManagerImpl infoManager = new SplitInfoManagerImpl();
         infoManager.attach(versionManager);
         return infoManager;
-    }
-
-    public static File getDefaultSplitInfoFile(Context context, String defaultVersion) {
-        String defaultSplitInfoFileName = SplitConstants.QIGSAW_PREFIX + defaultVersion + SplitConstants.DOT_JSON;
-        return new File(context.getDir(SplitConstants.QIGSAW, Context.MODE_PRIVATE), defaultSplitInfoFileName);
     }
 }
