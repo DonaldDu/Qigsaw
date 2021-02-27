@@ -6,7 +6,7 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
-import com.dhy.md5.MD5UtilKt;
+import com.dhy.qigsawbundle.apkmd5.MD5UtilKt;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,10 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
