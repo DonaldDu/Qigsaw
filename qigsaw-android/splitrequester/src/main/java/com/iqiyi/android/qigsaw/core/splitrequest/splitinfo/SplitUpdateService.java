@@ -72,11 +72,9 @@ public class SplitUpdateService extends IntentService {
             return;
         }
         String oldSplitInfoVersion = manager.getCurrentSplitInfoVersion();
-        //parse split-info version.
         String newSplitInfoVersion = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_VERSION);
-        //parse split-info file path.
         String newSplitInfoPath = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_PATH);
-        if (newSplitInfoVersion.equals(oldSplitInfoVersion)) {//no new version means default
+        if (newSplitInfoVersion.equals(oldSplitInfoVersion) || manager.getAllSplitInfo(this) == null) {
             updateDefaultSplitInfo(manager, oldSplitInfoVersion, newSplitInfoPath);
             return;
         }
