@@ -38,7 +38,6 @@ import com.google.android.play.core.splitcompat.SplitCompat;
 import com.iqiyi.android.qigsaw.core.common.ProcessUtil;
 import com.iqiyi.android.qigsaw.core.common.SplitBaseInfoProvider;
 import com.iqiyi.android.qigsaw.core.common.SplitConstants;
-import com.iqiyi.android.qigsaw.core.extension.AABExtension;
 import com.iqiyi.android.qigsaw.core.splitdownload.Downloader;
 import com.iqiyi.android.qigsaw.core.splitinstall.SplitApkInstaller;
 import com.iqiyi.android.qigsaw.core.splitinstall.SplitInstallReporterManager;
@@ -51,7 +50,6 @@ import com.iqiyi.android.qigsaw.core.splitreport.DefaultSplitUninstallReporter;
 import com.iqiyi.android.qigsaw.core.splitreport.DefaultSplitUpdateReporter;
 import com.iqiyi.android.qigsaw.core.splitrequest.splitinfo.SplitUpdateReporterManager;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -141,13 +139,13 @@ public class Qigsaw {
         SplitLoadManagerService.getInstance().clear();
         SplitLoadManagerService.getInstance().injectPathClassloader();
         //data may be cached.
-        AABExtension.getInstance().clear();
-        AABExtension.getInstance().createAndActiveSplitApplication(context, qigsawMode);
+//        AABExtension.getInstance().clear();
+//        AABExtension.getInstance().createAndActiveSplitApplication(context, qigsawMode);
         SplitCompat.install(context);
     }
 
     private void onCreated() {
-        AABExtension.getInstance().onApplicationCreate();
+//        AABExtension.getInstance().onApplicationCreate();
         SplitLoadReporterManager.install(splitConfiguration.loadReporter == null ? new DefaultSplitLoadReporter(context) : splitConfiguration.loadReporter);
         //only work in main process!
         if (isMainProcess) {

@@ -25,6 +25,7 @@
 package com.iqiyi.android.qigsaw.core.splitdownload;
 
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 
 import java.util.List;
 
@@ -67,6 +68,8 @@ public interface Downloader {
      * @return if value < 0,  splits will be download ignore size in mobile data.
      */
     long getDownloadSizeThresholdWhenUsingMobileData();
+
+    long calculateNeedDownloadSize(@NonNull List<DownloadRequest> requests, long totalBytesNeedToDownload);
 
     /**
      * @return {@code true} if splits could only be deferred-downloaded while using wifi, otherwise {@code false}

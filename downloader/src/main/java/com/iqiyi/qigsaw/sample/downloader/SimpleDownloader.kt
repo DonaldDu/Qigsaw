@@ -50,4 +50,8 @@ class SimpleDownloader(private val threshold: Long = 10 * 1024 * 1024, private v
         task.progress = DownloadProgress()
         return task
     }
+
+    override fun calculateNeedDownloadSize(requests: MutableList<DownloadRequest>, totalBytesNeedToDownload: Long): Long {
+        return  totalBytesNeedToDownload
+    }
 }
