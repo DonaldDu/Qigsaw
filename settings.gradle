@@ -1,6 +1,6 @@
 //include ':qhelper'
 //include ':app'
-include 'downloader'
+//include 'downloader'
 //include ':java', ':assets', ':native'
 include ':splitcore', ':playcorelibrary', ':splitcommon'
 include ':splitinstaller', ':splitdownloader', ':splitloader'
