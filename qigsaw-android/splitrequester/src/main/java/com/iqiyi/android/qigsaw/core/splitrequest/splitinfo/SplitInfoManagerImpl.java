@@ -26,11 +26,10 @@ package com.iqiyi.android.qigsaw.core.splitrequest.splitinfo;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import android.text.TextUtils;
 
 import com.iqiyi.android.qigsaw.core.common.FileUtil;
 import com.iqiyi.android.qigsaw.core.common.SplitConstants;
@@ -206,12 +205,10 @@ final class SplitInfoManagerImpl implements SplitInfoManager {
             String currentVersion = versionManager.getCurrentVersion();
             String defaultVersion = versionManager.getDefaultVersion();
             SplitLog.i(TAG, "currentVersion : %s defaultVersion : %s", currentVersion, defaultVersion);
-            if (defaultVersion.equals(currentVersion)) {
-                details = createSplitDetailsForDefaultVersion(context, defaultVersion);
-            } else {
-                File updatedSplitInfoFile = new File(versionManager.getRootDir(), SplitConstants.QIGSAW_PREFIX + currentVersion + SplitConstants.DOT_JSON);
-                details = createSplitDetailsForNewVersion(updatedSplitInfoFile);
-            }
+
+            File updatedSplitInfoFile = new File(versionManager.getRootDir(), SplitConstants.QIGSAW_PREFIX + currentVersion + SplitConstants.DOT_JSON);
+            details = createSplitDetailsForNewVersion(updatedSplitInfoFile);
+
             if (details != null) {
                 if (TextUtils.isEmpty(details.getQigsawId())) {
                     return null;

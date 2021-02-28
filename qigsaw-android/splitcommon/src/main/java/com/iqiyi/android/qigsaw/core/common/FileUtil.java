@@ -6,11 +6,14 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 
+import com.dhy.qigsawbundle.apkmd5.MD5UtilKt;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,18 +138,18 @@ public class FileUtil {
      * @param file
      */
     public static String getMD5(final File file) {
-        if (file == null || !file.exists()) {
-            return null;
-        }
+        if (file == null || !file.exists()) return null;
 
-        FileInputStream fin = null;
         try {
-            fin = new FileInputStream(file);
-            return getMD5(fin);
+            if (file.getName().endsWith(".apk")) {
+                return MD5UtilKt.apkMd5(file);
+            } else {
+                MessageDigest digest = MessageDigest.getInstance("MD5");
+                updateMD5WithFileInputStream(digest, file);
+                return MD5UtilKt.toHex(digest.digest());
+            }
         } catch (Exception e) {
             return null;
-        } finally {
-            closeQuietly(fin);
         }
     }
 
@@ -179,6 +182,24 @@ public class FileUtil {
             return md5Str.toString();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    private static void updateMD5WithFileInputStream(MessageDigest digest, File file) throws FileNotFoundException {
+        updateMD5(digest, new FileInputStream(file));
+    }
+
+    private static void updateMD5(MessageDigest digest, InputStream is) {
+        byte[] buffer = new byte[1024 * 1024 * 5];//5MB
+        int read;
+        try {
+            while ((read = is.read(buffer)) > 0) {
+                digest.update(buffer, 0, read);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to process file for MD5", e);
+        } finally {
+            closeQuietly(is);
         }
     }
 

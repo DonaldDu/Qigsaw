@@ -5,9 +5,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import com.liulishuo.okdownload.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
@@ -341,7 +342,6 @@ public class GroupDownloadContext {
                 throw new IllegalArgumentException("If you want to bind only with url, you have to"
                         + " provide parentPath on QueueSet!");
             }
-
             return bind(new DownloadTask.Builder(url, set.uri).setFilenameFromResponse(true));
         }
 

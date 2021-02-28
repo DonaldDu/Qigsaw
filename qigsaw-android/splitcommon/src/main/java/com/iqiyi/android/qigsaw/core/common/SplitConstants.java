@@ -49,6 +49,8 @@ public class SplitConstants {
 
     public static final String DOT_JSON = ".json";
 
+    public static final String IS_DEFAULT_SPLIT_INFO = "IS_DEFAULT_SPLIT_INFO";
+
     public static final String NEW_SPLIT_INFO_PATH = "new_split_info_path";
 
     public static final String NEW_SPLIT_INFO_VERSION = "new_split_info_version";

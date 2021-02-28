@@ -27,11 +27,10 @@ package com.iqiyi.android.qigsaw.core.splitrequest.splitinfo;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.IBinder;
+import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
-
-import android.text.TextUtils;
 
 import com.iqiyi.android.qigsaw.core.common.SplitBaseInfoProvider;
 import com.iqiyi.android.qigsaw.core.common.SplitConstants;
@@ -49,7 +48,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 @RestrictTo(LIBRARY_GROUP)
 public class SplitUpdateService extends IntentService {
 
-    private static final String TAG = "SplitUpdateService";
+    static final String TAG = "SplitUpdateService";
 
     public SplitUpdateService() {
         super("qigsaw_split_update");
@@ -72,16 +71,19 @@ public class SplitUpdateService extends IntentService {
             SplitLog.w(TAG, "SplitInfoManager has not been created!");
             return;
         }
+        String oldSplitInfoVersion = manager.getCurrentSplitInfoVersion();
+        String newSplitInfoVersion = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_VERSION);
+        String newSplitInfoPath = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_PATH);
+        if (newSplitInfoVersion.equals(oldSplitInfoVersion) || manager.getAllSplitInfo(this) == null) {
+            updateDefaultSplitInfo(manager, oldSplitInfoVersion, newSplitInfoPath);
+            return;
+        }
+
         Collection<SplitInfo> currentSplits = manager.getAllSplitInfo(this);
         if (currentSplits == null) {
             SplitLog.w(TAG, "Failed to get splits info of current split-info version!");
             return;
         }
-        //parse split-info version.
-        String newSplitInfoVersion = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_VERSION);
-        //parse split-info file path.
-        String newSplitInfoPath = intent.getStringExtra(SplitConstants.NEW_SPLIT_INFO_PATH);
-        String oldSplitInfoVersion = manager.getCurrentSplitInfoVersion();
         //parse registered class name of receiver.
         if (TextUtils.isEmpty(newSplitInfoVersion)) {
             SplitLog.w(TAG, "New split-info version null");
@@ -101,7 +103,7 @@ public class SplitUpdateService extends IntentService {
             return;
         }
 
-        if (newSplitInfoVersion.equals(manager.getCurrentSplitInfoVersion())) {
+        if (newSplitInfoVersion.equals(oldSplitInfoVersion)) {
             SplitLog.w(TAG, "New split-info version %s is equals to current version!", newSplitInfoVersion);
             onUpdateError(oldSplitInfoVersion, newSplitInfoVersion, SplitUpdateErrorCode.ERROR_SPLIT_INFO_VERSION_EXISTED);
             return;
@@ -130,6 +132,10 @@ public class SplitUpdateService extends IntentService {
         } else {
             onUpdateError(oldSplitInfoVersion, newSplitInfoVersion, SplitUpdateErrorCode.INTERNAL_ERROR);
         }
+    }
+
+    private void updateDefaultSplitInfo(SplitInfoManager manager, String oldSplitInfoVersion, String newSplitInfoPath) {
+        manager.updateSplitInfoVersion(getApplicationContext(), oldSplitInfoVersion, new File(newSplitInfoPath));
     }
 
     private void onUpdateOK(String oldSplitInfoVersion, String newSplitInfoVersion, List<String> updateSplits) {

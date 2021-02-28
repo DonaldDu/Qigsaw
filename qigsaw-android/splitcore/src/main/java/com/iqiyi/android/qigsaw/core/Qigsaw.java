@@ -38,7 +38,6 @@ import com.google.android.play.core.splitcompat.SplitCompat;
 import com.iqiyi.android.qigsaw.core.common.ProcessUtil;
 import com.iqiyi.android.qigsaw.core.common.SplitBaseInfoProvider;
 import com.iqiyi.android.qigsaw.core.common.SplitConstants;
-import com.iqiyi.android.qigsaw.core.extension.AABExtension;
 import com.iqiyi.android.qigsaw.core.splitdownload.Downloader;
 import com.iqiyi.android.qigsaw.core.splitinstall.SplitApkInstaller;
 import com.iqiyi.android.qigsaw.core.splitinstall.SplitInstallReporterManager;
@@ -79,6 +78,7 @@ public class Qigsaw {
         this.splitConfiguration = splitConfiguration;
         this.currentProcessName = ProcessUtil.getProcessName(context);
         this.isMainProcess = context.getPackageName().equals(currentProcessName);
+        ExtKt.injectResources((Application) context);
     }
 
     private static Qigsaw instance() {
@@ -94,7 +94,7 @@ public class Qigsaw {
      * @param context    we will use the application context
      * @param downloader some apps have their own downloader, so qigsaw just provide interface of download operation.
      */
-    public static void install(@NonNull Context context, @NonNull Downloader downloader) {
+    public static void install(@NonNull Application context, @NonNull Downloader downloader) {
         SplitConfiguration configuration = SplitConfiguration.newBuilder().build();
         install(context, downloader, configuration);
     }
@@ -106,7 +106,7 @@ public class Qigsaw {
      * @param downloader    some apps have their own downloader, so qigsaw just provide interface of download operation.
      * @param configuration {@link SplitConfiguration}
      */
-    public static void install(@NonNull Context context,
+    public static void install(@NonNull Application context,
                                @NonNull Downloader downloader,
                                @NonNull SplitConfiguration configuration) {
         //Qigsaw instance may be cached.
@@ -114,6 +114,10 @@ public class Qigsaw {
             sReference.set(new Qigsaw(context, downloader, configuration));
         }
         Qigsaw.instance().onBaseContextAttached();
+    }
+
+    public static void setQigsawConfigClassName(String qigsawConfigClassName) {
+        SplitBaseInfoProvider.setQigsawConfigClassName(qigsawConfigClassName);
     }
 
     private void onBaseContextAttached() {
@@ -135,13 +139,13 @@ public class Qigsaw {
         SplitLoadManagerService.getInstance().clear();
         SplitLoadManagerService.getInstance().injectPathClassloader();
         //data may be cached.
-        AABExtension.getInstance().clear();
-        AABExtension.getInstance().createAndActiveSplitApplication(context, qigsawMode);
+//        AABExtension.getInstance().clear();
+//        AABExtension.getInstance().createAndActiveSplitApplication(context, qigsawMode);
         SplitCompat.install(context);
     }
 
     private void onCreated() {
-        AABExtension.getInstance().onApplicationCreate();
+//        AABExtension.getInstance().onApplicationCreate();
         SplitLoadReporterManager.install(splitConfiguration.loadReporter == null ? new DefaultSplitLoadReporter(context) : splitConfiguration.loadReporter);
         //only work in main process!
         if (isMainProcess) {
@@ -185,6 +189,10 @@ public class Qigsaw {
         Qigsaw.instance().onCreated();
     }
 
+    public static String[] getDynamicFeatures() {
+        return SplitBaseInfoProvider.getDynamicFeatures();
+    }
+
     /**
      * Called when {@link Application#getResources()} is invoked.
      *
@@ -196,21 +204,21 @@ public class Qigsaw {
         }
     }
 
-    public static void registerSplitActivityLifecycleCallbacks(SplitActivityLifecycleCallbacks callback) {
-        Context context = Qigsaw.instance().context;
-        if (!(context instanceof Application)) {
-            throw new RuntimeException("If you want to monitor lifecycle of split activity, Application context must be required for Qigsaw#install(...)!");
-        }
-        ((Application) context).registerActivityLifecycleCallbacks(callback);
-    }
+//    public static void registerSplitActivityLifecycleCallbacks(SplitActivityLifecycleCallbacks callback) {
+//        Context context = Qigsaw.instance().context;
+//        if (!(context instanceof Application)) {
+//            throw new RuntimeException("If you want to monitor lifecycle of split activity, Application context must be required for Qigsaw#install(...)!");
+//        }
+//        ((Application) context).registerActivityLifecycleCallbacks(callback);
+//    }
 
-    public static void unregisterSplitActivityLifecycleCallbacks(SplitActivityLifecycleCallbacks callback) {
-        Context context = Qigsaw.instance().context;
-        if (!(context instanceof Application)) {
-            throw new RuntimeException("If you want to monitor lifecycle of split activity, Application context must be required for Qigsaw#install(...)!");
-        }
-        ((Application) context).unregisterActivityLifecycleCallbacks(callback);
-    }
+//    public static void unregisterSplitActivityLifecycleCallbacks(SplitActivityLifecycleCallbacks callback) {
+//        Context context = Qigsaw.instance().context;
+//        if (!(context instanceof Application)) {
+//            throw new RuntimeException("If you want to monitor lifecycle of split activity, Application context must be required for Qigsaw#install(...)!");
+//        }
+//        ((Application) context).unregisterActivityLifecycleCallbacks(callback);
+//    }
 
     /**
      * Update split info version. If new split does not equal to current version, qigsaw would update it.

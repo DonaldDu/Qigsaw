@@ -2,6 +2,7 @@ package com.iqiyi.qigsaw.buildtool.gradle.sample.upload
 
 import com.iqiyi.qigsaw.buildtool.gradle.upload.SplitApkUploadException
 import com.iqiyi.qigsaw.buildtool.gradle.upload.SplitApkUploader
+import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 
 class SampleSplitApkUploader implements SplitApkUploader {
@@ -26,8 +27,11 @@ class SampleSplitApkUploader implements SplitApkUploader {
      * Implement this method to upload split apks to your own server.
      */
     static String uploadSplitApk(File splitApk, String splitName, boolean useTestEnv) {
-        println("Upload split " + splitName + " split apk file path: " + splitApk + " useTestEnv: " + useTestEnv)
-        //todo::
-        return null
+        File uploaded = new File('D:\\test', splitApk.name)
+        if (uploaded.exists()) uploaded.delete()
+        FileUtils.copyFile(splitApk, uploaded)
+        println(">>>>>Upload split " + splitName + " split apk file path: " + splitApk + " useTestEnv: " + useTestEnv)
+
+        return 'http://192.168.50.58/' + splitApk.name
     }
 }

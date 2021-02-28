@@ -329,8 +329,10 @@ final class SplitInstallSupervisorImpl extends SplitInstallSupervisor {
                 SplitLog.d(TAG, "Splits have been downloaded, install them directly!");
                 downloadCallback.onCompleted();
             } else {
+                List<DownloadRequest> downloadRequests = createDownloadRequests(needInstallSplits);
+                realTotalBytesNeedToDownload = userDownloader.calculateNeedDownloadSize(downloadRequests, result[1]);
                 boolean usingMobileDataPermitted = realTotalBytesNeedToDownload < downloadSizeThresholdValue && !userDownloader.isDeferredDownloadOnlyWhenUsingWifiData();
-                userDownloader.deferredDownload(sessionId, createDownloadRequests(needInstallSplits), downloadCallback, usingMobileDataPermitted);
+                userDownloader.deferredDownload(sessionId, downloadRequests, downloadCallback, usingMobileDataPermitted);
             }
         } catch (IOException e) {
             callback.onError(bundleErrorCode(SplitInstallInternalErrorCode.BUILTIN_SPLIT_APK_COPIED_FAILED));
@@ -369,7 +371,7 @@ final class SplitInstallSupervisorImpl extends SplitInstallSupervisor {
             sessionManager.setSessionState(sessionId, sessionState);
             //calculate bytes to download
             long totalBytesToDownload = result[0];
-            long realTotalBytesNeedToDownload = result[1];
+            long realTotalBytesNeedToDownload = userDownloader.calculateNeedDownloadSize(downloadRequests, result[1]);
             SplitLog.d(TAG, "totalBytesToDownload: %d, realTotalBytesNeedToDownload: %d ", totalBytesToDownload, realTotalBytesNeedToDownload);
             sessionState.setTotalBytesToDownload(totalBytesToDownload);
             StartDownloadCallback downloadCallback = new StartDownloadCallback(splitInstaller, sessionId, sessionManager, needInstallSplits);
@@ -464,6 +466,7 @@ final class SplitInstallSupervisorImpl extends SplitInstallSupervisor {
                         .fileName(splitInfo.getSplitName() + "-" + apkData.getAbi() + SplitConstants.DOT_APK)
                         .fileMD5(apkData.getMd5())
                         .moduleName(splitInfo.getSplitName())
+                        .size(apkData.getSize())
                         .build();
                 requests.add(request);
             }
@@ -484,10 +487,10 @@ final class SplitInstallSupervisorImpl extends SplitInstallSupervisor {
                 FileUtil.closeQuietly(processor);
             }
             //calculate splits total download size.
-            totalBytesToDownload = totalBytesToDownload + splitInfo.getApkTotalSize(appContext);
+            totalBytesToDownload += splitInfo.getApkTotalSize(appContext);
             for (SplitDownloadPreprocessor.SplitFile splitApk : splitApkList) {
                 if (!splitApk.exists()) {
-                    realTotalBytesNeedToDownload = realTotalBytesNeedToDownload + splitApk.realSize;
+                    realTotalBytesNeedToDownload += splitApk.realSize;
                 }
             }
         }

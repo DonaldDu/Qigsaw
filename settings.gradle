@@ -1,12 +1,14 @@
-include ':app','downloader'
-include ':java', ':assets', ':native'
+//include ':qhelper'
+//include ':app'
+//include 'downloader'
+//include ':java', ':assets', ':native'
 include ':splitcore', ':playcorelibrary', ':splitcommon'
 include ':splitinstaller', ':splitdownloader', ':splitloader'
 include ':splitrequester', ':splitreporter', ':splitextension'
 
-project(':assets').projectDir = new File("./features/assets")
-project(':java').projectDir = new File("./features/java")
-project(':native').projectDir = new File("./features/native")
+//project(':assets').projectDir = new File("./features/assets")
+//project(':java').projectDir = new File("./features/java")
+//project(':native').projectDir = new File("./features/native")
 
 project(':splitcore').projectDir = new File("./qigsaw-android/splitcore")
 project(':playcorelibrary').projectDir = new File("./qigsaw-android/playcorelibrary")
